@@ -76,53 +76,20 @@ An alert fires. An agent investigates, retrieves applicable regulations, routes 
 
 **Repositories involved:** ai-orchestration-patterns · ai-rag-governance · ai-approval-gates · ai-opex
 
-```
-1. Alert arrives (monitoring, Slack, Jira, GitLab — multiple signal types)
+```mermaid
+flowchart TD
+    A["Alert fires<br/>monitoring · Slack · GitLab · Jira"]
+    B["Source Router<br/>ai-orchestration-patterns · Pattern 08<br/>4 signal types → 4 handlers dispatched in parallel"]
+    C["Parallel Data Collection<br/>ai-orchestration-patterns · Pattern 03<br/>Normalized timeline assembled · hypothesis generated"]
+    D["RAG Governance<br/>ai-rag-governance<br/>action=restart · resource=service · env=production<br/>Retrieved: maintenance window + role authority"]
+    E{"Governance synthesis<br/>⚠ Conflict: immediate action vs 48h notice<br/>Exception path identified → G4 + G1"}
+    F["G4 Escalation Gate<br/>ai-approval-gates<br/>On-call lead: emergency exception approved ✓"]
+    G["G1 Decision Gate<br/>ai-approval-gates<br/>Mitigation plan approved ✓"]
+    H["AI Execution<br/>ai-opex<br/>Apply mitigation step by step"]
+    I["G2 Validation Gate<br/>ai-opex · ai-approval-gates<br/>Service restored — Validated ✓"]
+    J["Post-action obligation<br/>Notification within 2h · exception record written"]
 
-   Pattern: Source Router [ai-orchestration-patterns]
-   ├── Monitoring signal  → monitoring handler
-   ├── Slack escalation   → Slack handler
-   ├── GitLab deployment  → GitLab handler
-   └── Jira P1 ticket     → Jira handler
-   All four dispatched in parallel.
-
-2. Evidence collected in parallel
-
-   Pattern: Parallel Data Collection [ai-orchestration-patterns]
-   Normalized output: {type, source, timestamp, content} per signal.
-   Timeline assembled; probable cause hypothesis generated.
-
-3. Regulation check before any mitigation action
-
-   Framework: RAG Governance [ai-rag-governance]
-   Query: action_type=restart, resource_type=service, environment=production
-   Retrieved regulations:
-     - Maintenance window policy [required]: announce ≥48h before change
-     - Role authority policy [mandatory]: P1 mitigations require on-call lead approval
-   Governance synthesis:
-     - Maintenance window: CANNOT SATISFY (emergency)
-       → exception path available: emergency classification + post-change notification
-     - Role authority: REQUIRES VERIFICATION
-   Gate routing: G4 (Escalation) for role authority; G1 (Decision) for plan approval.
-
-4. Human approval gates
-
-   Framework: Approval Gates [ai-approval-gates]
-   G4 gate: on-call lead confirms emergency classification + approves authority exception
-   G1 gate: engineer reviews mitigation plan (restart service, rollback config)
-   Both gates: APPROVED.
-
-5. Execution
-
-   Model: Execution Model [ai-opex]
-   AI executes approved mitigation step by step.
-   Validation Gate (G2): engineer confirms service restored.
-   Outcome: Validated.
-
-6. Post-action obligation (from regulation exception)
-
-   Notification sent within 2h per maintenance window exception clause.
-   Exception record written: regulation ID, reason, approver, expiry.
+    A --> B --> C --> D --> E -->|exception path| F --> G --> H --> I --> J
 ```
 
 **Pattern composition:** Source Router → Parallel Data Collection → Knowledge Cache (RAG) → Sequential Gate (G4 + G1) → Stateful Executor → Validation Gate (G2)
@@ -135,48 +102,26 @@ An engineer requests additional capacity. Before the agent provisions anything, 
 
 **Repositories involved:** ai-rag-governance · ai-approval-gates · ai-orchestration-patterns · ai-opex
 
-```
-1. Task intake
+```mermaid
+flowchart TD
+    A["Request: add 3 nodes to production cluster"]
+    B["Stateful Executor<br/>ai-orchestration-patterns · Pattern 07<br/>Artifact created: plan.md with checkpoint markers"]
+    C["Coordinator-Delegate<br/>ai-orchestration-patterns · Pattern 06<br/>Decompose → dispatch 3 specialist agents"]
+    D1["Specialist A<br/>monitoring<br/>utilization 81% · headroom 19%"]
+    D2["Specialist B<br/>asset management<br/>template · cost · lead time"]
+    D3["Specialist C<br/>change history<br/>3 prior provisioning events"]
+    E["Parallel Data Collection<br/>ai-orchestration-patterns · Pattern 03<br/>3 specialists run in parallel → results collected"]
+    F["RAG Governance<br/>ai-rag-governance<br/>Retrieved: Capacity + Maintenance + Role authority"]
+    G{"Governance synthesis<br/>Capacity: SATISFIABLE · Maintenance: VERIFY<br/>Role authority: EXCEPTION REQUIRED → G4 + G1"}
+    H["G4 Escalation Gate<br/>ai-approval-gates<br/>Infrastructure lead: +3 nodes approved ✓"]
+    I["G1 Decision Gate<br/>ai-approval-gates<br/>Announcement sent 72h ago — confirmed ✓"]
+    J["AI Execution<br/>ai-opex<br/>Provision 3 nodes"]
+    K["G2 Validation Gate<br/>ai-opex · ai-approval-gates<br/>Cluster healthy: 67% utilization ✓"]
 
-   Request: "Add 3 nodes to production cluster payments-cluster-eu"
-   Pattern: Stateful Executor [ai-orchestration-patterns]
-   Artifact created: plan.md with phases and checkpoint markers.
-
-2. Context assembly
-
-   Pattern: Coordinator-Delegate [ai-orchestration-patterns]
-   Coordinator dispatches specialists in parallel:
-     Specialist A (monitoring): current utilization = 81%, headroom = 19%
-     Specialist B (asset management): cluster template, node cost, lead time
-     Specialist C (change history): last 3 provisioning events and outcomes
-
-3. Regulation retrieval
-
-   Framework: RAG Governance [ai-rag-governance]
-   Query: action_type=provision, resource_type=server, environment=production
-   Retrieved regulations:
-     - Capacity policy [mandatory]: post-action utilization ≤80%, headroom ≥20%
-     - Planned maintenance [required]: announce ≥48h before infrastructure change
-     - Role authority [mandatory]: provisioning >2 nodes requires infrastructure lead sign-off
-   Governance synthesis:
-     - Capacity: SATISFIABLE — adding 3 nodes moves utilization to ~67%, headroom to ~33% ✓
-     - Maintenance announcement: REQUIRES VERIFICATION — was ≥48h notice sent?
-     - Role authority: EXCEPTION REQUIRED — request exceeds self-approval threshold (2 nodes)
-   Gate routing: G1 (Decision) for verification; G4 (Escalation) for authority.
-
-4. Approval gates
-
-   Framework: Approval Gates [ai-approval-gates]
-   G4 gate: Infrastructure lead approves provisioning of 3 nodes.
-   G1 gate: engineer confirms announcement was sent ≥48h ago (sent 72h ago — confirmed).
-   Both gates: APPROVED.
-
-5. Execution
-
-   Model: Execution Model [ai-opex]
-   AI executes provisioning step by step.
-   Validation Gate (G2): engineer confirms nodes are healthy and cluster utilization is 67%.
-   Outcome: Validated.
+    A --> B --> C
+    C --> D1 & D2 & D3
+    D1 & D2 & D3 --> E --> F --> G
+    G -->|G4 then G1| H --> I --> J --> K
 ```
 
 **Pattern composition:** Stateful Executor → Coordinator-Delegate → Parallel Data Collection → Knowledge Cache (RAG) → Sequential Gate (G4 + G1) → Execution Model → Validation Gate (G2)
