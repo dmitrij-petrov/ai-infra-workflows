@@ -114,10 +114,16 @@ G1 Capacity · G2 Reboot · G3 Role · G4 Cross-team · G5 Automate · G6 Soluti
 | [`docs/approval-gate-pattern.md`](docs/approval-gate-pattern.md) | The unified gate pattern and its three implementations |
 | [`docs/governance-layer.md`](docs/governance-layer.md) | Six regulation-based checks with thresholds and gate behaviours |
 | [`docs/integration-guide.md`](docs/integration-guide.md) | How to integrate into existing workflow tooling |
+| [`docs/system-overview.md`](docs/system-overview.md) | How the five repositories fit together — layered diagram, concept map, composed use-case traces |
 
 ---
 
-## Related
+## How this fits in the ecosystem
 
-- [ai-opex](https://github.com/dddeeemmm/ai-opex) — the execution model (Layer 5): Decision Gate → Execute → Validation Gate
-- [ai-automations](https://github.com/dddeeemmm/ai-automations) — reference implementation of scheduled operational workflows (Layer 8)
+**[ai-opex](https://github.com/dddeeemmm/ai-opex)** — implements Layer 5 of this architecture: the execution model (context assembly → Decision Gate → execution → Validation Gate). ai-opex is the starting point for teams adopting the stack.
+
+**[ai-approval-gates](https://github.com/dddeeemmm/ai-approval-gates)** — the full specification of the Approval Gate Pattern referenced in `docs/approval-gate-pattern.md`. Where this repository describes three implementations of the same principle, ai-approval-gates defines the complete gate taxonomy (G1–G5), the state machine, and the conformance properties that make a gate implementation correct.
+
+**[ai-rag-governance](https://github.com/dddeeemmm/ai-rag-governance)** — implements the retrieval mechanics behind the Governance Layer (Layer 3). The six governance rules described in `docs/governance-layer.md` become dynamic and current through RAG retrieval: regulations live in a knowledge base, are queried at execution time, and determine which gate type fires.
+
+**[ai-orchestration-patterns](https://github.com/dddeeemmm/ai-orchestration-patterns)** — names the coordination patterns used across all eight layers. Sequential Gate (Pattern 02) is the named form of the Approval Gate Pattern. Knowledge Cache (Pattern 05) is the structural form of the RAG layer. Coordinator-Delegate (Pattern 06) is how the Agent Layer composes specialist agents. The pattern catalog gives these architectural components reusable, portable names.
