@@ -14,6 +14,17 @@ AI agents can execute infrastructure work autonomously. But autonomy without com
 
 ---
 
+## Why traditional workflows fail
+
+| Failure mode | Consequence |
+|---|---|
+| **Coordination overhead** | Infrastructure changes are approved through ad-hoc channels; no defined gate, no defined owner, no audit trail |
+| **Context fragmentation** | Knowledge of how systems interact is locked in individuals; each new operator rebuilds context from scratch |
+| **Execution drift** | Agents execute without checking applicable regulations; rules exist in documents but are never consulted at runtime |
+| **Approval bottlenecks** | Escalation chains are ad-hoc; authority boundaries are implicit; the wrong person approves or no one approves at all |
+
+---
+
 ## Eight-Layer Model
 
 ```
@@ -106,6 +117,53 @@ G1 Capacity · G2 Reboot · G3 Role · G4 Cross-team · G5 Automate · G6 Soluti
 
 ---
 
+## Practical example
+
+TLS certificate rotation — all eight layers in sequence:
+
+```
+Task: rotate TLS certificate on production API gateway
+
+Layer 1 — TRIGGER
+  Source: mission contract "rotate tls cert on api-gateway-prod"
+
+Layer 2 — ORCHESTRATION
+  Subtasks: retrieve current cert · generate new cert · deploy [irreversible] · validate
+
+Layer 3 — GOVERNANCE (runs before the deploy step)
+  G1 Capacity: headroom 41% ✓  |  G3 Role: gateway access confirmed ✓
+  G5 Automation: second-run rule satisfied ✓  |  G6 Knowledge: rotation runbook exists ✓
+  All pass → proceed
+
+Layer 4 — AGENTS
+  Security agent: retrieves current cert, checks expiry (12 days remaining)
+  DevOps agent:   generates new cert via internal CA
+
+Layer 5 — EXECUTION
+  G1 Decision Gate ⏸
+    Context: expiry in 12 days | new cert valid 365 days | rollback: restore previous cert < 5 min
+    → Approved
+  G3 Irreversibility Gate ⏸ (before deploy)
+    Action: replace TLS cert on api-gateway-prod | blast radius: all API traffic during rotation (< 2s)
+    Rollback: restore previous cert from backup
+    → Approved
+  Cert deployed.
+  G2 Validation Gate ⏸
+    Evidence: new cert active ✓ | expiry 365 days ✓ | zero SSL errors in 5-min window ✓
+    → Validated
+
+Layer 6 — MEMORY
+  Logged to team memory: cert last rotated 2026-05-26, next due 2027-05-26
+
+Layer 7 — OBSERVATION
+  SSL error rate: 0% post-rotation ✓
+
+Layer 8 — KNOWLEDGE
+  Rotation runbook updated with new expiry date
+```
+
+---
+
 ## Contents
 
 | Path | Description |
@@ -115,6 +173,18 @@ G1 Capacity · G2 Reboot · G3 Role · G4 Cross-team · G5 Automate · G6 Soluti
 | [`docs/governance-layer.md`](docs/governance-layer.md) | Six regulation-based checks with thresholds and gate behaviours |
 | [`docs/integration-guide.md`](docs/integration-guide.md) | How to integrate into existing workflow tooling |
 | [`docs/system-overview.md`](docs/system-overview.md) | How the five repositories fit together — layered diagram, concept map, composed use-case traces |
+
+---
+
+## Design principles
+
+**Governance is a synchronous gate, not an audit log.** A step cannot proceed until all applicable checks pass. Logging that an action happened provides accountability without control. The governance layer runs before every production-touching step — not after.
+
+**Each layer has a defined contract with adjacent layers.** The trigger layer delivers a typed work item to orchestration. The governance layer delivers a pass/block decision to the agent layer. The execution layer delivers an evidence package to validation. Undefined interfaces between layers are where execution drift enters.
+
+**Eight layers are not optional.** Removing the governance layer means agents execute without regulation checks. Removing the observation layer means incidents go undetected. Removing the knowledge layer means regulations are hardcoded and stale. Each layer exists because systems without it have failed in specific, documented ways.
+
+**Regulations are operational, not documentary.** A regulation that is checked at runtime — even if it results in a gate or a block — is a regulation doing its job. A regulation that exists in a document but is never consulted at execution time provides no operational protection.
 
 ---
 
