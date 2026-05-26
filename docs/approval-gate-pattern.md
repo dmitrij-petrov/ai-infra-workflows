@@ -54,7 +54,7 @@ Decision Gate: the agent assembles full context (goal, affected systems, rollbac
 
 Validation Gate: after execution, the agent presents the outcome. The human confirms one of: Validated / Falsified / Inconclusive. These states map directly to the mission-contract lifecycle terminal states.
 
-**Reference:** [ai-opex](https://github.com/dddeeemmm/ai-opex)
+**Reference:** [ai-operational-execution](https://github.com/dddeeemmm/ai-operational-execution)
 
 ---
 

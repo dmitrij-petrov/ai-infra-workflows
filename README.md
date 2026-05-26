@@ -120,7 +120,7 @@ G1 Capacity · G2 Reboot · G3 Role · G4 Cross-team · G5 Automate · G6 Soluti
 
 ## How this fits in the ecosystem
 
-**[ai-opex](https://github.com/dddeeemmm/ai-opex)** — implements Layer 5 of this architecture: the execution model (context assembly → Decision Gate → execution → Validation Gate). ai-opex is the starting point for teams adopting the stack.
+**[ai-operational-execution](https://github.com/dddeeemmm/ai-operational-execution)** — implements Layer 5 of this architecture: the execution model (context assembly → Decision Gate → execution → Validation Gate). ai-operational-execution is the starting point for teams adopting the stack.
 
 **[ai-approval-gates](https://github.com/dddeeemmm/ai-approval-gates)** — the full specification of the Approval Gate Pattern referenced in `docs/approval-gate-pattern.md`. Where this repository describes three implementations of the same principle, ai-approval-gates defines the complete gate taxonomy (G1–G5), the state machine, and the conformance properties that make a gate implementation correct.
 

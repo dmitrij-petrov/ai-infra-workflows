@@ -2,7 +2,7 @@
 
 How five repositories form a coherent system for AI-assisted infrastructure operations.
 
-Each repository is independently useful. Together they cover the full stack: from naming the problem (ai-opex) to specifying human checkpoints (ai-approval-gates) to retrieving applicable rules (ai-rag-governance) to naming the coordination patterns (ai-orchestration-patterns) to showing how it all fits into one architecture (this repository).
+Each repository is independently useful. Together they cover the full stack: from naming the problem (ai-operational-execution) to specifying human checkpoints (ai-approval-gates) to retrieving applicable rules (ai-rag-governance) to naming the coordination patterns (ai-orchestration-patterns) to showing how it all fits into one architecture (this repository).
 
 ---
 
@@ -11,7 +11,7 @@ Each repository is independently useful. Together they cover the full stack: fro
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │  LAYER 0 — EXECUTION MODEL                                          │
-│  ai-opex                                                            │
+│  ai-operational-execution                                                            │
 │  The operational contract: AI prepares, human approves, AI          │
 │  executes. Decision Gate (G1) → Execute → Validation Gate (G2).    │
 │  The foundation every other layer builds on.                        │
@@ -44,8 +44,8 @@ Each repository is independently useful. Together they cover the full stack: fro
 
 | Concept | Repository | Where to look |
 |---|---|---|
-| Decision Gate + Validation Gate | [ai-opex](https://github.com/dddeeemmm/ai-opex) | `docs/whitepaper.md` |
-| Execution model (4-phase) | [ai-opex](https://github.com/dddeeemmm/ai-opex) | `skills/execution-model/SKILL.md` |
+| Decision Gate + Validation Gate | [ai-operational-execution](https://github.com/dddeeemmm/ai-operational-execution) | `docs/whitepaper.md` |
+| Execution model (4-phase) | [ai-operational-execution](https://github.com/dddeeemmm/ai-operational-execution) | `skills/execution-model/SKILL.md` |
 | Gate taxonomy (G1–G5) | [ai-approval-gates](https://github.com/dddeeemmm/ai-approval-gates) | `docs/framework.md` |
 | Gate state machine | [ai-approval-gates](https://github.com/dddeeemmm/ai-approval-gates) | `docs/framework.md` |
 | Gate conformance properties | [ai-approval-gates](https://github.com/dddeeemmm/ai-approval-gates) | `docs/framework.md` |
@@ -74,7 +74,7 @@ Two scenarios that show multiple repositories working together in a single workf
 
 An alert fires. An agent investigates, retrieves applicable regulations, routes to the correct approval gate, and applies a fix only after explicit human sign-off.
 
-**Repositories involved:** ai-orchestration-patterns · ai-rag-governance · ai-approval-gates · ai-opex
+**Repositories involved:** ai-orchestration-patterns · ai-rag-governance · ai-approval-gates · ai-operational-execution
 
 ```mermaid
 flowchart TD
@@ -85,8 +85,8 @@ flowchart TD
     E{"Governance synthesis<br/>⚠ Conflict: immediate action vs 48h notice<br/>Exception path identified → G4 + G1"}
     F["G4 Escalation Gate<br/>ai-approval-gates<br/>On-call lead: emergency exception approved ✓"]
     G["G1 Decision Gate<br/>ai-approval-gates<br/>Mitigation plan approved ✓"]
-    H["AI Execution<br/>ai-opex<br/>Apply mitigation step by step"]
-    I["G2 Validation Gate<br/>ai-opex · ai-approval-gates<br/>Service restored — Validated ✓"]
+    H["AI Execution<br/>ai-operational-execution<br/>Apply mitigation step by step"]
+    I["G2 Validation Gate<br/>ai-operational-execution · ai-approval-gates<br/>Service restored — Validated ✓"]
     J["Post-action obligation<br/>Notification within 2h · exception record written"]
 
     A --> B --> C --> D --> E -->|exception path| F --> G --> H --> I --> J
@@ -100,7 +100,7 @@ flowchart TD
 
 An engineer requests additional capacity. Before the agent provisions anything, it retrieves applicable regulations, assembles a cross-team plan, and gates on explicit approval.
 
-**Repositories involved:** ai-rag-governance · ai-approval-gates · ai-orchestration-patterns · ai-opex
+**Repositories involved:** ai-rag-governance · ai-approval-gates · ai-orchestration-patterns · ai-operational-execution
 
 ```mermaid
 flowchart TD
@@ -115,8 +115,8 @@ flowchart TD
     G{"Governance synthesis<br/>Capacity: SATISFIABLE · Maintenance: VERIFY<br/>Role authority: EXCEPTION REQUIRED → G4 + G1"}
     H["G4 Escalation Gate<br/>ai-approval-gates<br/>Infrastructure lead: +3 nodes approved ✓"]
     I["G1 Decision Gate<br/>ai-approval-gates<br/>Announcement sent 72h ago — confirmed ✓"]
-    J["AI Execution<br/>ai-opex<br/>Provision 3 nodes"]
-    K["G2 Validation Gate<br/>ai-opex · ai-approval-gates<br/>Cluster healthy: 67% utilization ✓"]
+    J["AI Execution<br/>ai-operational-execution<br/>Provision 3 nodes"]
+    K["G2 Validation Gate<br/>ai-operational-execution · ai-approval-gates<br/>Cluster healthy: 67% utilization ✓"]
 
     A --> B --> C
     C --> D1 & D2 & D3
@@ -132,7 +132,7 @@ flowchart TD
 
 If you are new to this system, read in this order:
 
-1. **[ai-opex](https://github.com/dddeeemmm/ai-opex)** — understand the execution model (10 min)
+1. **[ai-operational-execution](https://github.com/dddeeemmm/ai-operational-execution)** — understand the execution model (10 min)
 2. **[`docs/architecture.md`](architecture.md)** — understand the eight layers (10 min)
 3. **[ai-approval-gates](https://github.com/dddeeemmm/ai-approval-gates)** — understand gate types and conformance (15 min)
 4. **[ai-rag-governance](https://github.com/dddeeemmm/ai-rag-governance)** — understand regulation retrieval (15 min)

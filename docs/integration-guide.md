@@ -75,7 +75,7 @@ These are forcing questions at the start of each task, not checks at each step.
 
 **Precondition:** Your team currently handles operational tasks ad-hoc (Slack messages, direct SSH, manual Jira updates).
 
-The execution model ([ai-opex](https://github.com/dddeeemmm/ai-opex)) adds structure without requiring a workflow engine:
+The execution model ([ai-operational-execution](https://github.com/dddeeemmm/ai-operational-execution)) adds structure without requiring a workflow engine:
 
 ```
 1. Engineer describes the task to the AI agent
