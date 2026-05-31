@@ -35,7 +35,7 @@ The answer is not more process — it is **architecture**: a clear set of layers
 │                        Semantic search · Auto-publish       │
 ├─────────────────────────────────────────────────────────────┤
 │  7. OBSERVATION        Closed-loop feedback                  │
-│                        Metrics · Assessment · Investigation │
+│                        Outcome signals · Health · Iterate   │
 ├─────────────────────────────────────────────────────────────┤
 │  8. KNOWLEDGE BASE     Static and dynamic context           │
 │                        Regulations · Runbooks · Schedules   │
@@ -138,13 +138,13 @@ The Memory Layer transforms institutional knowledge from a person-dependent reso
 
 ### Layer 7 — Observation Layer
 
-Closed-loop feedback from executed workflows. Three observation patterns:
+Post-execution outcome verification. After the Validation Gate (Layer 5) confirms that a step is complete, the Observation Layer checks whether the change achieved its intended effect over time.
 
-- **Cell/team metrics** — outcome-based reporting (delivery rate, headroom, L2 interruption rate, incident count). Multi-source: tickets + docs + messages. Run monthly; compare to prior period.
-- **Capacity assessment** — scheduled or triggered evaluation of infrastructure resource utilisation. Computes P95 utilisation, Days-to-Exhaust (DTE), and procurement signals per the Capacity Management regulation.
-- **Incident investigation** — real-time: multi-source evidence (metrics, change history, logs, SSH ground truth), probability-ranked hypotheses, approval gate before any mutating fix.
+The observation is specific to each workflow run: it measures the signal the change was intended to move — error rate, utilisation delta, latency, health check result — against the expected outcome. A healthy signal closes the loop. Drift or regression triggers a follow-up entry in the Trigger Layer (1) and is recorded in the Knowledge Base (8).
 
-Observation outputs feed back into the Knowledge Base (Layer 8) and — via learnings — into the Memory Layer (6).
+This is the "Observe → Iterate" step in the automation lifecycle described in Layer 5. See the worked example in [`integration-guide.md`](integration-guide.md) for how this step appears at the end of each workflow.
+
+Observation outputs feed back into Layer 1 (follow-up triggers) and Layer 8 (Knowledge Base).
 
 ### Layer 8 — Knowledge Base
 

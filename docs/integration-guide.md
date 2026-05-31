@@ -131,7 +131,7 @@ Deploy the layers in this sequence (each layer is independently useful; later la
 | 4 | Agent Layer (4) | Specialised agents; team composition files; routing rules |
 | 5 | Orchestration Layer (2) | Epic-driven workflow; three gates; agent team composition |
 | 6 | Memory Layer (6) | Shared memory server; Stop hook for auto-publish; `.mcp.json` config |
-| 7 | Observation Layer (7) | Cell metrics reporting; capacity assessment; incident investigation |
+| 7 | Observation Layer (7) | Post-execution outcome verification; health signals per workflow run; feedback into Trigger and Knowledge Base layers |
 | 8 | Trigger Layer (1) | Mission contract lifecycle; ticket classification; scheduled triggers |
 
 You do not need all eight layers on day one. A team that starts with Governance (Layer 3) and the Execution Model (Layer 5) has already eliminated the two most common failure modes: unchecked production changes and invisible decision authority.

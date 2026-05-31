@@ -45,8 +45,7 @@ AI agents can execute infrastructure work autonomously. But autonomy without com
 ├─────────────────────────────────────────────────────────────┤
 │  6. MEMORY           Shared team memory (semantic search)   │
 ├─────────────────────────────────────────────────────────────┤
-│  7. OBSERVATION      Cell metrics · Capacity assess ·       │
-│                      Incident investigation                  │
+│  7. OBSERVATION      Post-execution outcome check           │
 ├─────────────────────────────────────────────────────────────┤
 │  8. KNOWLEDGE        Regulations · Runbooks · Digests       │
 └─────────────────────────────────────────────────────────────┘
@@ -182,7 +181,7 @@ Layer 8 — KNOWLEDGE
 
 **Each layer has a defined contract with adjacent layers.** The trigger layer delivers a typed work item to orchestration. The governance layer delivers a pass/block decision to the agent layer. The execution layer delivers an evidence package to validation. Undefined interfaces between layers are where execution drift enters.
 
-**Eight layers are not optional.** Removing the governance layer means agents execute without regulation checks. Removing the observation layer means incidents go undetected. Removing the knowledge layer means regulations are hardcoded and stale. Each layer exists because systems without it have failed in specific, documented ways.
+**Eight layers are not optional.** Removing the governance layer means agents execute without regulation checks. Removing the observation layer means outcome drift goes undetected — you cannot tell whether a change achieved its intended effect. Removing the knowledge layer means regulations are hardcoded and stale. Each layer exists because systems without it have failed in specific, documented ways.
 
 **Regulations are operational, not documentary.** A regulation that is checked at runtime — even if it results in a gate or a block — is a regulation doing its job. A regulation that exists in a document but is never consulted at execution time provides no operational protection.
 
