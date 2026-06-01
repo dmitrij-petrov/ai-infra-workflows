@@ -1,6 +1,6 @@
 # Governance Layer
 
-The component that keeps autonomous workflow execution within your team's agreed operational boundaries. Every regulation your team has written down — capacity thresholds, reboot procedures, decision authority, cross-team coordination rules — becomes a runtime check that runs before a workflow step executes.
+The component that keeps autonomous workflow execution within your team's agreed operational boundaries. Every regulation your team has written down — capacity thresholds, access requirements, maintenance windows, response SLAs, change gates — becomes a runtime check that runs before a workflow step executes.
 
 ---
 
@@ -13,7 +13,7 @@ The component that keeps autonomous workflow execution within your team's agreed
         ↓
 [Governance Layer: classify step type]
         ↓
-[Run applicable rule checks]
+[Run applicable regulation checks]
         ↓
     ┌───┴───┐
   PASS    FAIL / WARN
@@ -25,13 +25,13 @@ A step is blocked until all applicable checks pass. A check that returns WARN su
 
 ---
 
-## Rule Set
+## Regulation Examples
 
-The six rules below are based on operational regulations commonly found in infrastructure engineering teams. Thresholds are drawn from a real-world regulation set; adapt them to your organisation's definitions.
+The examples below are drawn from the taxonomy described in the [AI Governance Patterns](https://github.com/dddeeemmm/ai-governance-patterns) framework. They illustrate what well-formed operational regulations look like when retrieved at runtime. Replace or extend them with regulations from your organisation's knowledge base — the number and content are determined by what your team has encoded in the KB, not by this document.
 
 ---
 
-### G1 — Capacity Check
+### G1 — Capacity Headroom Policy
 
 **Applies to:** any operation that provisions, scales, or deallocates infrastructure resources.
 
@@ -82,95 +82,83 @@ The six rules below are based on operational regulations commonly found in infra
 
 ---
 
-### G3 — Role & Decision Authority
+### G3 — Production Access Policy
 
-**Applies to:** any action that requires a specific decision-maker's approval before proceeding.
+**Applies to:** any direct access to a production system (SSH, console, admin panel, database, or equivalent).
 
-| Action domain | Decision authority | Gate |
-|---|---|---|
-| Code & Delivery (local scope) | Individual engineer — Consent: "Is it safe to try?" | PASS on Consent |
-| Local architecture change | Tech Lead — competence-based decision | Require Tech Lead confirmation |
-| Cross-team architecture | Engineering Manager + Tech Leads — Bubble-Up | BLOCK until EM+TL sign-off |
-| Process & rituals | Scrum Master / Flow Guardian | Require sign-off |
-| Vision, strategy, budget | Director / Engineering Director | BLOCK until Director approval |
+| Check | Gate behaviour |
+|---|---|
+| 2FA verified for the executing principal | Required; BLOCK if not confirmed |
+| Access request references an active issue ticket | Required; BLOCK if no ticket linked |
+| Documented purpose stated before session opens | Required |
+| Credential or session not older than 8h | Required; WARN if near expiry; BLOCK if expired |
 
-**Decision model:** Consent over Consensus. The question is not "does everyone agree?" but "is there a paramount objection backed by evidence?" If no such objection exists, proceed.
+**Post-access:** Access duration, actions taken, and outcome are recorded in the access log before the session is closed. The access record references the originating ticket.
 
-**Arbitrator Protocol:** If two decision-makers are blocked on each other, escalate to the person with deepest domain competence (not seniority). Their decision stands; both parties commit.
-
-**Bubble-Up escalation path:** Cell → Tech Lead → Engineering Manager → Director. A decision escalates only as far as it needs to go to find a resolution.
+**Exception path:** Emergency break-glass access (active incident, no time to open a ticket) requires notification to the Head of Infrastructure and Security within 1h, with documented reason and actions taken.
 
 ---
 
-### G4 — Cross-Team Coordination
+### G4 — Planned Maintenance Notification
 
-**Applies to:** any workflow that spans more than one team or department.
+**Applies to:** any planned maintenance that affects services used by other teams.
 
 | Check | Gate behaviour |
 |---|---|
 | Coordinator identified and named | Required; BLOCK if missing |
-| Responsible point of contact per team identified | Required; BLOCK if any team unrepresented |
-| Key agreements documented in the team's issue tracker | Required before technical work begins |
-| MVP scope defined; iterative delivery model agreed | Required |
+| Affected teams notified ≥48h in advance | Required; BLOCK if not confirmed |
+| Maintenance window approved by relevant stakeholders | Required |
+| Rollback plan documented and reviewed | Required |
 
-**Work model:** Deliver the minimum viable product first, obtain stakeholder approval, then deliver in short iterations with approval after each. All key agreements are documented — not communicated verbally.
+**Work model:** Notification must be sent through the team's coordination channel, not via direct message. All key agreements are documented in the issue tracker before technical work begins.
 
-**Escalation path:** If coordinator or team representative is missing → escalate through the team's meta-coordination layer before technical work begins.
-
----
-
-### G5 — Automation Eligibility
-
-**Applies to:** any task being performed manually that has been performed manually before.
-
-| Condition | Gate behaviour |
-|---|---|
-| Task performed manually for the **first time** | PASS; log the run |
-| Task performed manually for the **second time** | WARN: "This task has been run manually before. Build an automation or agent skill before the third run." |
-| Task sending a priority notification via direct message (not P0/P1) | BLOCK; route through the team's coordination channel |
-
-**The second-run rule:** First time, doing it manually is fine. Second time, build the automation. Third time should be zero-touch. This rule enforces the shift from reactive manual operations to a self-improving automated system.
+**Exception path:** Emergency maintenance (active outage mitigation) is excepted from the 48h requirement; notify affected teams within 2h of the maintenance start with reason and estimated duration.
 
 ---
 
-### G6 — Knowledge Artifact Gate
+### G5 — Incident Response SLA
 
-**Applies to:** any design work or new implementation.
+**Applies to:** any workflow triggered by a customer-impacting or service-degrading incident.
+
+| Priority | Condition | Required response | Gate behaviour |
+|---|---|---|---|
+| P1 | Service down, customer-impacting | First response ≤ 15 min; mitigation plan ≤ 30 min | HARD BLOCK on unrelated work; switch to incident mode |
+| P2 | Degraded service, partial impact | First response ≤ 1h | WARN: SLA timer active |
+| P3 | Non-impacting, investigation needed | First response ≤ next business day | PASS; log |
+
+**SLA timer:** Starts from first report (ticket creation or alert trigger), not from when the team picks it up.
+
+**Post-incident:** P1 and P2 incidents require a post-incident review documented in the knowledge base within 5 business days.
+
+---
+
+### G6 — Change Gate Regulation
+
+**Applies to:** any change to production infrastructure configuration, service topology, or data schema.
 
 | Check | Gate behaviour |
 |---|---|
-| Solution document exists describing approach, trade-offs, and expected outcome | Required before moving from Design to Build; WARN if missing |
-| Key decisions documented in the team's knowledge base | Required for all decisions with cross-team or long-term impact |
+| Change documented in the issue tracker with scope and expected impact | Required; BLOCK if absent |
+| Rollback plan defined with estimated rollback duration | Required; BLOCK if absent |
+| Impact assessment includes capacity and dependency review | Required |
+| Rollback duration ≤ 30 min | PASS; proceed |
+| Rollback duration > 30 min | WARN → Irreversibility Gate (see ai-approval-gates) |
 
-**Rationale:** Design is cheap; rebuilding after wrong assumptions is expensive even with AI assistance. A solution document is not bureaucracy — it is the thinking that prevents rework. The gate enforces: think first, build fast.
+**Staged delivery:** Changes that affect multiple systems must be delivered in stages, with validation between each stage. Each stage is a separate governed step.
+
+**Exception path:** Emergency changes made during active incident mitigation are excepted; create a change record in the issue tracker within 2h of the change with reason, actions taken, and outcome.
 
 ---
 
 ## Configuring for Your Organisation
 
-The six rules above define the **structure** of the Governance Layer. The **thresholds** (capacity percentages, notification lead times, role boundaries) should match your organisation's own regulations.
+The regulation examples above illustrate six categories from the [AI Governance Patterns taxonomy](https://github.com/dddeeemmm/ai-governance-patterns): Resource & Capacity (G1), Infrastructure Lifecycle (G2, G6), Security & Access (G3), Cross-team Collaboration (G4), and Operational SLA (G5). Your organisation's regulation KB may contain more, fewer, or different regulations in each category.
 
 To adapt this layer:
 
-1. **Map your regulations** to the six rule categories (G1–G6)
-2. **Replace thresholds** with your organisation's agreed values
-3. **Add rules** for any regulation category not covered by G1–G6 (security compliance, data classification, change freeze windows, etc.)
-4. **Store the rule set** in your Knowledge Base so agents can read it at session start
+1. **Identify your regulations** by mapping them to the [seven taxonomy categories](https://github.com/dddeeemmm/ai-governance-patterns/docs/framework.md): Operational SLA, Resource & Capacity, Infrastructure Lifecycle, Security & Access, Cross-team Collaboration, Team Organization, Templates & SOPs
+2. **Replace thresholds** in the examples above with your organisation's agreed values
+3. **Add or remove regulation examples** to match what is actually encoded in your KB
+4. **Store the regulation set** in your Knowledge Base so agents can retrieve applicable regulations at execution time rather than relying on a hardcoded list
 
 The Governance Layer is a skill or rule file, not a separate service. It loads at the start of each workflow session and is called by the orchestrator before each step.
-
----
-
-## SLA Integration
-
-If your organisation has defined SLA parameters (response time, resolution time by priority level), add them as a seventh rule:
-
-**G7 — SLA Compliance**
-
-| Check | Gate behaviour |
-|---|---|
-| Estimated execution time within SLA response window | PASS |
-| Execution would breach SLA | WARN → escalate or pre-notify affected parties |
-| Active SLA breach (customer-impacting) | HARD BLOCK on non-urgent work; switch to incident mode |
-
-Until SLA parameters are formally defined, use the Capacity Management Critical threshold (≥90% for 10 min) as a proxy for SEV-1/SEV-2 classification, and require post-incident review within 5 business days.

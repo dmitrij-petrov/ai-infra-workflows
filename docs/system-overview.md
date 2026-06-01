@@ -53,7 +53,7 @@ Each repository is independently useful. Together they cover the full stack: fro
 | Regulation KB integration | [ai-governance-patterns](https://github.com/dddeeemmm/ai-governance-patterns) | `docs/kb-integration.md` |
 | Gate routing from regulations | [ai-governance-patterns](https://github.com/dddeeemmm/ai-governance-patterns) | `docs/framework.md §Gate routing` |
 | Eight-layer architecture | [ai-infra-workflows](https://github.com/dddeeemmm/ai-infra-workflows) | `docs/architecture.md` |
-| Governance Layer (G1–G6 rules) | [ai-infra-workflows](https://github.com/dddeeemmm/ai-infra-workflows) | `docs/governance-layer.md` |
+| Governance Layer (regulation examples) | [ai-infra-workflows](https://github.com/dddeeemmm/ai-infra-workflows) | `docs/governance-layer.md` |
 | Adoption paths | [ai-infra-workflows](https://github.com/dddeeemmm/ai-infra-workflows) | `docs/integration-guide.md` |
 | Sequential Gate pattern | [ai-orchestration-patterns](https://github.com/dddeeemmm/ai-orchestration-patterns) | `docs/patterns/02-sequential-gate.md` |
 | Knowledge Cache pattern | [ai-orchestration-patterns](https://github.com/dddeeemmm/ai-orchestration-patterns) | `docs/patterns/05-knowledge-cache.md` |
@@ -111,8 +111,8 @@ flowchart TD
     D2["Specialist B<br/>asset management<br/>template · cost · lead time"]
     D3["Specialist C<br/>change history<br/>3 prior provisioning events"]
     E["Parallel Data Collection<br/>ai-orchestration-patterns · Pattern 03<br/>3 specialists run in parallel → results collected"]
-    F["RAG Governance<br/>ai-governance-patterns<br/>Retrieved: Capacity + Maintenance + Role authority"]
-    G{"Governance synthesis<br/>Capacity: SATISFIABLE · Maintenance: VERIFY<br/>Role authority: EXCEPTION REQUIRED → G4 + G1"}
+    F["RAG Governance<br/>ai-governance-patterns<br/>Retrieved: Capacity + Maintenance + Change gate"]
+    G{"Governance synthesis<br/>Capacity: SATISFIABLE · Maintenance: VERIFY<br/>Change gate: EXCEPTION REQUIRED (rollback > 30 min) → G4 + G1"}
     H["G4 Escalation Gate<br/>ai-approval-gates<br/>Infrastructure lead: +3 nodes approved ✓"]
     I["G1 Decision Gate<br/>ai-approval-gates<br/>Announcement sent 72h ago — confirmed ✓"]
     J["AI Execution<br/>ai-operational-execution<br/>Provision 3 nodes"]

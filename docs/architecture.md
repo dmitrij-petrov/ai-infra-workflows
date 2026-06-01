@@ -72,18 +72,18 @@ For teams of 10 specialised agents, composition into **agent teams** handles com
 
 The layer that keeps autonomous execution within organisational bounds. Before any step that touches a production system, the Governance Layer runs a set of regulation-based checks. Checks are synchronous — a failing check blocks the step until the issue is resolved or a human explicitly accepts the risk.
 
-Six check categories:
+Regulation examples (drawn from the org's regulation KB):
 
 | Check | Trigger |
 |---|---|
 | G1 Capacity | Any resource operation (provision, scale, deallocate) |
 | G2 Reboot Policy | Any server restart |
-| G3 Role Authority | Any action requiring a specific decision-maker |
-| G4 Cross-Team | Any workflow spanning more than one team |
-| G5 Automation Eligibility | Any manual task being repeated for the second time |
-| G6 Knowledge Artifact | Any design work or new implementation |
+| G3 Access Policy | Any direct access to a production system |
+| G4 Maintenance Notification | Any planned maintenance affecting other teams |
+| G5 Incident SLA | Any incident-triggered workflow |
+| G6 Change Gate | Any change to production config, topology, or schema |
 
-See [`governance-layer.md`](governance-layer.md) for the full rule set with thresholds.
+See [`governance-layer.md`](governance-layer.md) for the full regulation examples with thresholds.
 
 ### Layer 4 — Agent Layer
 
@@ -166,6 +166,6 @@ The static and dynamic context that all other layers query:
 
 **4. Agents specialise; teams compose.** No single agent handles everything. Composition is explicit and declared. This prevents "do everything" agents that are hard to test, audit, or replace.
 
-**5. Knowledge lives in artifacts.** Every design decision is documented before execution begins. If it is in someone's head, it dies when they are on vacation. The Knowledge Base, Memory Layer, and G6 check collectively enforce this.
+**5. Knowledge lives in artifacts.** Every design decision is documented before execution begins. If it is in someone's head, it dies when they are on vacation. The Knowledge Base and Memory Layer collectively enforce this.
 
 **6. Speed and compliance are not opposites.** A well-designed governance layer makes teams faster, not slower — by eliminating the ambiguity that creates ad-hoc escalations and after-the-fact audits.

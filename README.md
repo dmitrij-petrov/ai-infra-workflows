@@ -35,7 +35,8 @@ AI agents can execute infrastructure work autonomously. But autonomy without com
 │                      INTAKE → DEBATE → [GATE] → EXECUTE     │
 ├─────────────────────────────────────────────────────────────┤
 │  3. GOVERNANCE  ◄── THE NEW LAYER ────────────────────────  │
-│                      Capacity · Reboot · Role · Cross-team  │
+│                      Capacity · Reboot · Access · SLA ·     │
+│                      Maintenance · Change Gate              │
 │                      Checks run before every step           │
 ├─────────────────────────────────────────────────────────────┤
 │  4. AGENTS           architect · sre · devops · security…   │
@@ -80,25 +81,25 @@ See [`docs/approval-gate-pattern.md`](docs/approval-gate-pattern.md) for the uni
 
 ## The Governance Layer
 
-The component that keeps autonomous execution aligned with your team's regulations. Before any workflow step that touches production, six checks run synchronously:
+The component that keeps autonomous execution aligned with your team's regulations. Before any workflow step that touches production, applicable regulation checks run synchronously — the set is drawn from the org's regulation knowledge base:
 
 ```mermaid
 flowchart TD
     S[Workflow step requested] --> C[Classify step type]
     C --> G1[G1: Capacity\nheadroom ≥20%, DTE, thresholds]
     C --> G2[G2: Reboot policy\nwindow · notification · checklist]
-    C --> G3[G3: Role authority\nConsent / Bubble-Up escalation]
-    C --> G4[G4: Cross-team\ncoordinator · documented agreements]
-    C --> G5[G5: Automation eligibility\nsecond-run rule]
-    C --> G6[G6: Knowledge artifact\nsolution doc before code]
-    G1 & G2 & G3 & G4 & G5 & G6 --> R{All pass?}
+    C --> G3[G3: Access policy\n2FA · ticket link · session log]
+    C --> G4[G4: Maintenance notification\n48h notice · coordinator · rollback]
+    C --> G5[G5: Incident SLA\nP1 ≤15 min · P2 ≤1h]
+    C --> G6[G6: Change gate\nrollback plan · impact · staged delivery]
+    G1 & G2 & G3 & G4 & G5 & G6 --> R{All applicable pass?}
     R -->|Yes| E[Execute]
     R -->|No| H[Block or human gate]
 ```
 
 Governance is a **synchronous gate** — not an audit log. A step cannot proceed until all applicable checks pass.
 
-See [`docs/governance-layer.md`](docs/governance-layer.md) for all six rules with specific thresholds and gate behaviours.
+See [`docs/governance-layer.md`](docs/governance-layer.md) for regulation examples with specific thresholds and gate behaviours.
 
 ---
 
@@ -109,7 +110,7 @@ See [`docs/governance-layer.md`](docs/governance-layer.md) for all six rules wit
 **2.** Add a Governance pre-flight to your workflow entrypoint:
 ```markdown
 Before any production-touching step, run Governance checks:
-G1 Capacity · G2 Reboot · G3 Role · G4 Cross-team · G5 Automate · G6 Solution doc
+G1 Capacity · G2 Reboot · G3 Access · G4 Maintenance · G5 SLA · G6 Change gate
 ```
 
 **3.** Pick an integration path in [`docs/integration-guide.md`](docs/integration-guide.md)
@@ -130,9 +131,9 @@ Layer 2 — ORCHESTRATION
   Subtasks: retrieve current cert · generate new cert · deploy [irreversible] · validate
 
 Layer 3 — GOVERNANCE (runs before the deploy step)
-  G1 Capacity: headroom 41% ✓  |  G3 Role: gateway access confirmed ✓
-  G5 Automation: second-run rule satisfied ✓  |  G6 Knowledge: rotation runbook exists ✓
-  All pass → proceed
+  G1 Capacity: headroom 41% ✓  |  G3 Access: session linked to ticket CERT-8821, 2FA verified ✓
+  G6 Change Gate: rollback plan documented, rollback < 5 min ✓
+  All applicable pass → proceed
 
 Layer 4 — AGENTS
   Security agent: retrieves current cert, checks expiry (12 days remaining)
@@ -169,7 +170,7 @@ Layer 8 — KNOWLEDGE
 |---|---|
 | [`docs/architecture.md`](docs/architecture.md) | Eight-layer model — full descriptions and design principles |
 | [`docs/approval-gate-pattern.md`](docs/approval-gate-pattern.md) | The unified gate pattern and its three implementations |
-| [`docs/governance-layer.md`](docs/governance-layer.md) | Six regulation-based checks with thresholds and gate behaviours |
+| [`docs/governance-layer.md`](docs/governance-layer.md) | Regulation examples with thresholds and gate behaviours |
 | [`docs/integration-guide.md`](docs/integration-guide.md) | How to integrate into existing workflow tooling |
 | [`docs/system-overview.md`](docs/system-overview.md) | How the five repositories fit together — layered diagram, concept map, composed use-case traces |
 
@@ -193,6 +194,6 @@ Layer 8 — KNOWLEDGE
 
 **[ai-approval-gates](https://github.com/dddeeemmm/ai-approval-gates)** — the full specification of the Approval Gate Pattern referenced in `docs/approval-gate-pattern.md`. Where this repository describes three implementations of the same principle, ai-approval-gates defines the complete gate taxonomy (G1–G5), the state machine, and the conformance properties that make a gate implementation correct.
 
-**[ai-governance-patterns](https://github.com/dddeeemmm/ai-governance-patterns)** — implements the retrieval mechanics behind the Governance Layer (Layer 3). The six governance rules described in `docs/governance-layer.md` become dynamic and current through RAG retrieval: regulations live in a knowledge base, are queried at execution time, and determine which gate type fires.
+**[ai-governance-patterns](https://github.com/dddeeemmm/ai-governance-patterns)** — implements the retrieval mechanics behind the Governance Layer (Layer 3). The regulation examples described in `docs/governance-layer.md` become dynamic and current through RAG retrieval: regulations live in a knowledge base, are queried at execution time, and determine which gate type fires.
 
 **[ai-orchestration-patterns](https://github.com/dddeeemmm/ai-orchestration-patterns)** — names the coordination patterns used across all eight layers. Sequential Gate (Pattern 02) is the named form of the Approval Gate Pattern. Knowledge Cache (Pattern 05) is the structural form of the RAG layer. Coordinator-Delegate (Pattern 06) is how the Agent Layer composes specialist agents. The pattern catalog gives these architectural components reusable, portable names.
