@@ -28,12 +28,12 @@ Before adding checks, map each step in your workflow to one or more of the appli
 
 | Step type | Applicable checks |
 |---|---|
-| Provision / scale / deallocate resources | G1 (Capacity) |
-| Reboot any server | G2 (Reboot Policy) |
-| Direct access to a production system (SSH, console, DB) | G3 (Access Policy) |
-| Planned maintenance affecting other teams | G4 (Maintenance Notification) |
-| Incident-triggered workflow | G5 (Incident SLA) |
-| Any change to production config, topology, or schema | G6 (Change Gate) |
+| Provision / scale / deallocate resources | R1 (Capacity) |
+| Reboot any server | R2 (Reboot Policy) |
+| Direct access to a production system (SSH, console, DB) | R3 (Access Policy) |
+| Planned maintenance affecting other teams | R4 (Maintenance Notification) |
+| Incident-triggered workflow | R5 (Incident SLA) |
+| Any change to production config, topology, or schema | R6 (Change Gate) |
 
 ### Step 2: Add a governance pre-flight to your entrypoint
 
@@ -56,16 +56,16 @@ If your workflow already has approval checkpoints, governance checks slot into t
 
 | Existing gate | Add governance checks |
 |---|---|
-| Approach approval | G1 (capacity impact of decision), G6 (change documented with scope) |
-| Plan approval | G1 (final capacity), G2 (if reboots in plan), G4 (if multi-team impact) |
-| Result confirmation | G1 (post-change headroom), G2 (post-reboot validation) |
+| Approach approval | R1 (capacity impact of decision), R6 (change documented with scope) |
+| Plan approval | R1 (final capacity), R2 (if reboots in plan), R4 (if multi-team impact) |
+| Result confirmation | R1 (post-change headroom), R2 (post-reboot validation) |
 
-### Step 4: Check G5 and G6 at task intake
+### Step 4: Check R5 and R6 at task intake
 
-G5 (Incident SLA) fires as soon as an incident-triggered workflow starts: classify the incident priority and start the SLA timer immediately. G6 (Change Gate) fires before the first production-touching step: confirm the change is documented in the issue tracker before execution begins.
+R5 (Incident SLA) fires as soon as an incident-triggered workflow starts: classify the incident priority and start the SLA timer immediately. R6 (Change Gate) fires before the first production-touching step: confirm the change is documented in the issue tracker before execution begins.
 
-- G5: Is this an incident? If yes, what priority? The SLA timer starts from first report.
-- G6: Is this change documented with scope, expected impact, and rollback plan?
+- R5: Is this an incident? If yes, what priority? The SLA timer starts from first report.
+- R6: Is this change documented with scope, expected impact, and rollback plan?
 
 These are intake-level checks, not step-level checks.
 
@@ -87,7 +87,7 @@ The execution model ([ai-operational-execution](https://github.com/dddeeemmm/ai-
 
 **What this replaces:** the pattern where an engineer SSH's into a server, makes a change, and hopes it worked. The agent assembles the context, the engineer approves it, the agent executes it, the engineer validates the result. Every production change has a before-and-after record.
 
-**Governance integration:** The Context Brief at the Decision Gate includes the Governance Layer results. If G1 shows headroom will drop below 20%, the engineer sees it before approving.
+**Governance integration:** The Context Brief at the Decision Gate includes the Governance Layer results. If R1 shows headroom will drop below 20%, the engineer sees it before approving.
 
 ---
 
@@ -146,7 +146,7 @@ A capacity assessment is a good first workflow to implement because it is high-v
 
 ```
 1. Trigger: ticket created ("assess capacity for cluster X")
-2. Governance G1: check current utilisation before starting
+2. Governance R1: check current utilisation before starting
    → if Critical threshold active: BLOCK, notify team
 3. Agent: collect metrics
    - Query monitoring system: P95 utilisation, 13-week trend
@@ -154,7 +154,7 @@ A capacity assessment is a good first workflow to implement because it is high-v
    - Compute DTE = (Capacity_at_Action − Current) ÷ Daily_Growth_Slope
 4. Decision Gate: present findings to engineer
    → DTE, current headroom, recommendation (procure / optimise / monitor)
-   → Governance G1 result: PASS / WARN / BLOCK
+   → Governance R1 result: PASS / WARN / BLOCK
 5. Engineer approves recommendation
 6. Agent: execute (open procurement ticket, or apply optimisation)
 7. Validation Gate: confirm execution result
@@ -163,11 +163,11 @@ A capacity assessment is a good first workflow to implement because it is high-v
 ```
 
 **Governance integration points:**
-- Step 2: G1 check before starting (don't start work if Critical is active)
-- Step 4: G1 check on post-action headroom (does the proposed action restore headroom?)
-- Step 6: G6 check (procurement action documented in issue tracker with scope and expected impact)
+- Step 2: R1 check before starting (don't start work if Critical is active)
+- Step 4: R1 check on post-action headroom (does the proposed action restore headroom?)
+- Step 6: R6 check (procurement action documented in issue tracker with scope and expected impact)
 
-**Why this is the right first workflow:** It is entirely read-collect-compute-report until the human approves at step 5. The risk is low. The value is immediate. And it forces the team to define G1 thresholds concretely — which then applies to all future resource operations.
+**Why this is the right first workflow:** It is entirely read-collect-compute-report until the human approves at step 5. The risk is low. The value is immediate. And it forces the team to define R1 thresholds concretely — which then applies to all future resource operations.
 
 ---
 
@@ -178,15 +178,15 @@ A capacity assessment is a good first workflow to implement because it is high-v
 ```
 1. Trigger: P0/P1 alert or engineer declaration
 2. Incident Commander (IC): classify severity, identify blast radius
-   → Governance G5: P1 SLA timer started (first response ≤ 15 min); P0 escalation to Director
+   → Governance R5: P1 SLA timer started (first response ≤ 15 min); P0 escalation to Director
 3. Agent: multi-source investigation
    → Monitoring: metric anomalies in time window
    → Change history: recent deploys, config changes
    → Ground truth: host-level checks via SSH (read-only)
    → Rank hypotheses by probability; present to IC
 4. Decision Gate: IC approves mitigation plan
-   → Governance G1: capacity impact of mitigation
-   → Governance G6: mitigation change documented with rollback plan
+   → Governance R1: capacity impact of mitigation
+   → Governance R6: mitigation change documented with rollback plan
 5. Agent: apply mitigation (restart, config rollback, traffic shift)
 6. Validation Gate: IC confirms service restored
 7. Memory: publish root cause, timeline, what failed, what fixed it
@@ -202,7 +202,7 @@ A capacity assessment is a good first workflow to implement because it is high-v
 If you want to start today with minimal setup:
 
 1. **Add the governance pre-flight** to your existing workflow agent's `CLAUDE.md` (or equivalent session context) — 5 minutes
-2. **Run one capacity assessment** using the worked example above — demonstrates G1, approval gates, and memory in a single, low-risk workflow
+2. **Run one capacity assessment** using the worked example above — demonstrates R1, approval gates, and memory in a single, low-risk workflow
 3. **Connect one team member** to the Shared Memory server — even one person publishing learnings is better than zero
 
 The full eight-layer architecture is the destination. Any layer you adopt today is independently valuable.

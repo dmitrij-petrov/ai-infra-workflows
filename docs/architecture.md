@@ -77,12 +77,12 @@ Regulation examples (drawn from the org's regulation KB):
 
 | Check | Trigger |
 |---|---|
-| G1 Capacity | Any resource operation (provision, scale, deallocate) |
-| G2 Reboot Policy | Any server restart |
-| G3 Access Policy | Any direct access to a production system |
-| G4 Maintenance Notification | Any planned maintenance affecting other teams |
-| G5 Incident SLA | Any incident-triggered workflow |
-| G6 Change Gate | Any change to production config, topology, or schema |
+| R1 Capacity | Any resource operation (provision, scale, deallocate) |
+| R2 Reboot Policy | Any server restart |
+| R3 Access Policy | Any direct access to a production system |
+| R4 Maintenance Notification | Any planned maintenance affecting other teams |
+| R5 Incident SLA | Any incident-triggered workflow |
+| R6 Change Gate | Any change to production config, topology, or schema |
 
 See [`governance-layer.md`](governance-layer.md) for the full regulation examples with thresholds.
 

@@ -31,7 +31,7 @@ The examples below are drawn from the taxonomy described in the [AI Governance P
 
 ---
 
-### G1 — Capacity Headroom Policy
+### R1 — Capacity Headroom Policy
 
 **Applies to:** any operation that provisions, scales, or deallocates infrastructure resources.
 
@@ -55,7 +55,7 @@ The examples below are drawn from the taxonomy described in the [AI Governance P
 
 ---
 
-### G2 — Server Reboot Policy
+### R2 — Server Reboot Policy
 
 **Applies to:** any operation that reboots a physical or virtual server.
 
@@ -82,7 +82,7 @@ The examples below are drawn from the taxonomy described in the [AI Governance P
 
 ---
 
-### G3 — Production Access Policy
+### R3 — Production Access Policy
 
 **Applies to:** any direct access to a production system (SSH, console, admin panel, database, or equivalent).
 
@@ -99,7 +99,7 @@ The examples below are drawn from the taxonomy described in the [AI Governance P
 
 ---
 
-### G4 — Planned Maintenance Notification
+### R4 — Planned Maintenance Notification
 
 **Applies to:** any planned maintenance that affects services used by other teams.
 
@@ -116,7 +116,7 @@ The examples below are drawn from the taxonomy described in the [AI Governance P
 
 ---
 
-### G5 — Incident Response SLA
+### R5 — Incident Response SLA
 
 **Applies to:** any workflow triggered by a customer-impacting or service-degrading incident.
 
@@ -132,7 +132,7 @@ The examples below are drawn from the taxonomy described in the [AI Governance P
 
 ---
 
-### G6 — Change Gate Regulation
+### R6 — Change Gate Regulation
 
 **Applies to:** any change to production infrastructure configuration, service topology, or data schema.
 
@@ -152,7 +152,7 @@ The examples below are drawn from the taxonomy described in the [AI Governance P
 
 ## Configuring for Your Organisation
 
-The regulation examples above illustrate six categories from the [AI Governance Patterns taxonomy](https://github.com/dddeeemmm/ai-governance-patterns): Resource & Capacity (G1), Infrastructure Lifecycle (G2, G6), Security & Access (G3), Cross-team Collaboration (G4), and Operational SLA (G5). Your organisation's regulation KB may contain more, fewer, or different regulations in each category.
+The regulation examples above illustrate six categories from the [AI Governance Patterns taxonomy](https://github.com/dddeeemmm/ai-governance-patterns): Resource & Capacity (R1), Infrastructure Lifecycle (R2, R6), Security & Access (R3), Cross-team Collaboration (R4), and Operational SLA (R5). Your organisation's regulation KB may contain more, fewer, or different regulations in each category.
 
 To adapt this layer:
 

@@ -86,13 +86,13 @@ The component that keeps autonomous execution aligned with your team's regulatio
 ```mermaid
 flowchart TD
     S[Workflow step requested] --> C[Classify step type]
-    C --> G1[G1: Capacity\nheadroom ≥20%, DTE, thresholds]
-    C --> G2[G2: Reboot policy\nwindow · notification · checklist]
-    C --> G3[G3: Access policy\n2FA · ticket link · session log]
-    C --> G4[G4: Maintenance notification\n48h notice · coordinator · rollback]
-    C --> G5[G5: Incident SLA\nP1 ≤15 min · P2 ≤1h]
-    C --> G6[G6: Change gate\nrollback plan · impact · staged delivery]
-    G1 & G2 & G3 & G4 & G5 & G6 --> R{All applicable pass?}
+    C --> R1[R1: Capacity\nheadroom ≥20%, DTE, thresholds]
+    C --> R2[R2: Reboot policy\nwindow · notification · checklist]
+    C --> R3[R3: Access policy\n2FA · ticket link · session log]
+    C --> R4[R4: Maintenance notification\n48h notice · coordinator · rollback]
+    C --> R5[R5: Incident SLA\nP1 ≤15 min · P2 ≤1h]
+    C --> R6[R6: Change gate\nrollback plan · impact · staged delivery]
+    R1 & R2 & R3 & R4 & R5 & R6 --> R{All applicable pass?}
     R -->|Yes| E[Execute]
     R -->|No| H[Block or human gate]
 ```
@@ -110,7 +110,7 @@ See [`docs/governance-layer.md`](docs/governance-layer.md) for regulation exampl
 **2.** Add a Governance pre-flight to your workflow entrypoint:
 ```markdown
 Before any production-touching step, run Governance checks:
-G1 Capacity · G2 Reboot · G3 Access · G4 Maintenance · G5 SLA · G6 Change gate
+R1 Capacity · R2 Reboot · R3 Access · R4 Maintenance · R5 SLA · R6 Change gate
 ```
 
 **3.** Pick an integration path in [`docs/integration-guide.md`](docs/integration-guide.md)
@@ -131,8 +131,8 @@ Layer 2 — ORCHESTRATION
   Subtasks: retrieve current cert · generate new cert · deploy [irreversible] · validate
 
 Layer 3 — GOVERNANCE (runs before the deploy step)
-  G1 Capacity: headroom 41% ✓  |  G3 Access: session linked to ticket CERT-8821, 2FA verified ✓
-  G6 Change Gate: rollback plan documented, rollback < 5 min ✓
+  R1 Capacity: headroom 41% ✓  |  R3 Access: session linked to ticket CERT-8821, 2FA verified ✓
+  R6 Change Gate: rollback plan documented, rollback < 5 min ✓
   All applicable pass → proceed
 
 Layer 4 — AGENTS

@@ -51,7 +51,7 @@ Each repository is independently useful. Together they cover the full stack: fro
 | Gate conformance properties | [ai-approval-gates](https://github.com/dddeeemmm/ai-approval-gates) | `docs/framework.md` |
 | Regulation retrieval lifecycle | [ai-governance-patterns](https://github.com/dddeeemmm/ai-governance-patterns) | `docs/framework.md` |
 | Regulation KB integration | [ai-governance-patterns](https://github.com/dddeeemmm/ai-governance-patterns) | `docs/kb-integration.md` |
-| Gate routing from regulations | [ai-governance-patterns](https://github.com/dddeeemmm/ai-governance-patterns) | `docs/framework.md §Gate routing` |
+| Gate routing from regulations | [ai-governance-patterns](https://github.com/dddeeemmm/ai-governance-patterns) | `docs/framework.md §Governance synthesis` |
 | Eight-layer architecture | [ai-infra-workflows](https://github.com/dddeeemmm/ai-infra-workflows) | `docs/architecture.md` |
 | Governance Layer (regulation examples) | [ai-infra-workflows](https://github.com/dddeeemmm/ai-infra-workflows) | `docs/governance-layer.md` |
 | Adoption paths | [ai-infra-workflows](https://github.com/dddeeemmm/ai-infra-workflows) | `docs/integration-guide.md` |
