@@ -29,7 +29,7 @@ AI agents can execute infrastructure work autonomously. But autonomy without com
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  1. TRIGGER          Mission contracts · Tickets · Cron     │
+│  1. TRIGGER          Work requests · Alerts · Schedule      │
 ├─────────────────────────────────────────────────────────────┤
 │  2. ORCHESTRATION    Workflow engine (epic-driven)           │
 │                      INTAKE → DEBATE → [GATE] → EXECUTE     │
@@ -125,7 +125,7 @@ TLS certificate rotation — all eight layers in sequence:
 Task: rotate TLS certificate on production API gateway
 
 Layer 1 — TRIGGER
-  Source: mission contract "rotate tls cert on api-gateway-prod"
+  Source: work request "rotate tls cert on api-gateway-prod"
 
 Layer 2 — ORCHESTRATION
   Subtasks: retrieve current cert · generate new cert · deploy [irreversible] · validate

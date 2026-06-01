@@ -17,13 +17,13 @@ The answer is not more process — it is **architecture**: a clear set of layers
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  1. TRIGGER LAYER      Work enters the system               │
-│                        Mission contracts · Tickets · Cron   │
+│                        Work requests · Alerts · Schedule    │
 ├─────────────────────────────────────────────────────────────┤
 │  2. ORCHESTRATION      Workflow engine coordinates agents   │
 │                        INTAKE → DEBATE → [GATE] → EXECUTE   │
 ├─────────────────────────────────────────────────────────────┤
 │  3. GOVERNANCE         Regulations enforced at runtime      │
-│                        Capacity · Reboot · Role · Process   │
+│                        Capacity · Reboot · Access · SLA…    │
 ├─────────────────────────────────────────────────────────────┤
 │  4. AGENT LAYER        Specialised agents execute work      │
 │                        architect · sre · devops · security… │
@@ -50,11 +50,12 @@ Data flows top-to-bottom for execution and bottom-to-top for feedback. The Gover
 
 ### Layer 1 — Trigger Layer
 
-Work enters the system through three channels:
+Work enters the system through four channels:
 
-- **Mission contracts** — outcome-defined units of work, agreed by a stakeholder and executed by one IC. The lifecycle (Intake → Locked → Validated / Falsified / Inconclusive) provides a built-in validation framework.
+- **Work requests** — outcome-defined units of work initiated by a stakeholder with explicit acceptance criteria. The request specifies what success looks like; execution details remain with the agent.
 - **Issue tickets** — classified on intake into task categories; matched to the appropriate workflow in the Orchestration Layer.
-- **Scheduled triggers** — cron-based operational automations that run without a human initiating each run (reports, audits, capacity checks).
+- **Alert / event triggers** — monitoring events, incident signals, or webhook notifications that start a workflow without human initiation. The trigger carries context: affected service, severity, source signal.
+- **Scheduled triggers** — recurring automations that run on a fixed cadence without a human initiating each run (reports, audits, capacity checks).
 
 ### Layer 2 — Orchestration Layer
 
